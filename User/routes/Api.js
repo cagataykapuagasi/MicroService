@@ -2,18 +2,17 @@ const router = require("express").Router();
 
 const {
   addUser,
-  register,
-  refreshToken,
   getUser,
   getRandomUser,
   search,
   setFcm,
-  updateAbout,
+  updateUser,
   updatePhoto,
-  updatePassword,
   updateLanguage,
   remove,
   addFriend,
+  blockUser,
+  getNearbyUsers,
 } = require("../services/User");
 const upload = require("../handlers/Multer");
 
@@ -30,11 +29,13 @@ router.get("/user/random", GetRandomUser);
 router.post("/user/search", Search);
 router.post("/user/fcm", SetFcm);
 router.get("/user/profile", GetUser);
-router.post("/user/profile/update-about", UpdateAbout);
+router.post("/user/profile/update", UpdateUser);
 router.post("/user/profile/update-photo", upload.single("photo"), UpdatePhoto);
 router.post("/user/profile/update-language", UpdateLanguage);
 router.delete("/user/profile", Remove);
 router.post("/user/friends", AddFriend);
+router.post("/user/block", BlockUser);
+router.get("/user/nearby", GetNearbyUsers);
 
 function GetUser(req, res, next) {
   console.log("get user");
@@ -71,10 +72,10 @@ function SetFcm(req, res, next) {
     .catch((message) => res.status(400).send({ message }));
 }
 
-function UpdateAbout(req, res, next) {
+function UpdateUser(req, res, next) {
   console.log("update-about");
 
-  updateAbout(req)
+  updateUser(req)
     .then((r) => res.send(r))
     .catch((message) => res.status(400).send({ message }));
 }
@@ -96,6 +97,20 @@ function Remove(req, res, next) {
 function AddFriend(req, res, next) {
   console.log("add friend");
   addFriend(req)
+    .then((user) => res.send(user))
+    .catch((message) => res.status(400).send({ message }));
+}
+
+function GetNearbyUsers(req, res, next) {
+  console.log("get nearby");
+  getNearbyUsers(req)
+    .then((user) => res.send(user))
+    .catch((message) => res.status(400).send({ message }));
+}
+
+function BlockUser(req, res, next) {
+  console.log("block user");
+  blockUser(req)
     .then((user) => res.send(user))
     .catch((message) => res.status(400).send({ message }));
 }

@@ -46,7 +46,8 @@ async function UserService(req, res, next) {
     );
     res.status(200).send(data);
   } catch (error) {
-    res.status(error.response.status).send(error.response.data);
+    console.log(error);
+    res.status(error?.response?.status || 500).send(error?.response?.data);
   }
 }
 

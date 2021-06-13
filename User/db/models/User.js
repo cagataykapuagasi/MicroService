@@ -4,16 +4,18 @@ const uniqueValidator = require("mongoose-unique-validator");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
-const friendSchema = new Schema(
+const locationSchema = new Schema(
   {
-    id: {
-      type: String,
-      unique: true,
-      index: true,
-      required: [true, "can't be blank"],
+    latitude: {
+      type: Number,
+      default: 0,
+    },
+    longitude: {
+      type: Number,
+      default: 0,
     },
   },
-  { timestamps: true }
+  { _id: false }
 );
 
 const schema = new Schema(
@@ -41,7 +43,8 @@ const schema = new Schema(
       index: true,
     },
     friends: { type: Array },
-    blockedUsers: { type: Array },
+    blocked_users: { type: Array },
+    location: { type: locationSchema, default: {} },
   },
   { timestamps: true }
 );

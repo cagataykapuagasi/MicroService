@@ -12,6 +12,7 @@ const {
   registerErrors,
   updatePasswordErrors,
 } = require("../handlers/ErrorHandler");
+const { closestLocation } = require("../handlers/Location");
 const language = require("../translations");
 
 module.exports = {
@@ -20,11 +21,13 @@ module.exports = {
   getRandomUser,
   search,
   setFcm,
-  updateAbout,
+  updateUser,
   updatePhoto,
   updateLanguage,
   remove,
   addFriend,
+  blockUser,
+  getNearbyUsers,
 };
 
 async function addUser(req) {
@@ -68,10 +71,70 @@ async function addFriend(req) {
   }
 }
 
+async function getNearbyUsers(req) {
+  const { body } = req;
+
+  // if (req?.headers?.id === body.id) {
+  //   return Promise.reject("Cannot add friend yourself");
+  // }
+
+  try {
+    const user = await User.findById(req?.headers?.id);
+    const users = await User.find(
+      {
+        _id: { $ne: req?.headers?.id },
+      },
+      { salt: 0, hash: 0 }
+    );
+
+    const findedUsers = closestLocation(user.toJSON().location, users);
+
+    // if (!friend) {
+    //   return Promise.reject("Not found");
+    // }
+
+    // if (user.friends.find((f) => f.id === body.id)) {
+    //   return Promise.reject("Friend already added");
+    // }
+
+    //user.friends.push(FriendHandler(friend));
+    //await user.save();
+    return Promise.resolve(findedUsers);
+  } catch (error) {
+    return Promise.reject(error.message);
+  }
+}
+
+async function blockUser(req) {
+  const { body } = req;
+
+  if (req?.headers?.id === body.id) {
+    return Promise.reject("Cannot block yourself");
+  }
+
+  try {
+    const user = await User.findById(req?.headers?.id);
+    const blockedUser = await User.findById(body.id);
+    if (!blockedUser) {
+      return Promise.reject("Not found");
+    }
+
+    if (user.blocked_users.find((f) => f.id === body.id)) {
+      return Promise.reject("User already blocked");
+    }
+
+    user.blocked_users.push(FriendHandler(blockedUser));
+    await user.save();
+    return Promise.resolve(user.blocked_users);
+  } catch (error) {
+    return Promise.reject(error.message);
+  }
+}
+
 async function getUser(req) {
   console.log(req.headers);
   const user = await User.findById(req?.headers?.id);
-
+  console.log(user);
   if (user) {
     return Promise.resolve(userHandlerWithoutToken(user));
   }
@@ -92,12 +155,18 @@ async function getRandomUser({ userData: { id } }) {
   return Promise.resolve(user);
 }
 
-async function updateAbout({ body: { about }, userData: { id } }) {
+async function updateUser(req) {
+  const {
+    body: { profile_photo, fcm, friends, blocked_users, id, ...other },
+  } = req;
+
+  console.log(other);
   try {
-    const user = await User.findById(id);
-    user.about = about;
-    await user.save();
-    return Promise.resolve({ message: "About was successfully updated." });
+    const user = await User.findById(req?.headers?.id);
+    const newUser = { ...user.toJSON(), ...other };
+    console.log(newUser);
+    await user.update(newUser);
+    return Promise.resolve({ message: "User was successfully updated." });
   } catch ({ message }) {
     return Promise.reject(message);
   }
