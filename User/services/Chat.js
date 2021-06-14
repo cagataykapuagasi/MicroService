@@ -10,7 +10,7 @@ let pendingMessages = {};
 let subscribers = {};
 let fcm = new FCM(process.env.FCM);
 
-module.exports = function(io) {
+module.exports = function (io) {
   let userId = null;
 
   io.use((socket, next) => {
@@ -28,14 +28,14 @@ module.exports = function(io) {
     }
   });
 
-  io.on("connection", socket => {
+  io.on("connection", (socket) => {
     socket.sid = userId;
     sockets[userId] = socket;
     changeStatus({ id: socket.sid, status: true });
     console.log(socket.sid, "connected");
 
     if (pendingMessages[userId]) {
-      pendingMessages[userId].messages.forEach(message =>
+      pendingMessages[userId].messages.forEach((message) =>
         sockets[userId].emit("new message", message)
       );
 
@@ -77,7 +77,7 @@ async function changeStatus({ id, status }) {
 }
 
 function handleSubscription(socket) {
-  socket.on("subscribe", async id => {
+  socket.on("subscribe", async (id) => {
     if (!subscribers[id]) {
       subscribers[id] = [socket.sid];
     } else {
@@ -88,7 +88,7 @@ function handleSubscription(socket) {
     socket.emit("subscribelisten", user.status);
   });
 
-  socket.on("unsubscribe", id => {
+  socket.on("unsubscribe", (id) => {
     if (subscribers[id]) {
       if (subscribers[id].length < 2) {
         delete subscribers[id];
@@ -108,7 +108,7 @@ function informToMySubscribers({ socket, status }) {
   const subs = subscribers[socket.sid];
   //console.log("subsinfo", subs, status, "myid", socket.sid);
   if (subs) {
-    subs.forEach(id => {
+    subs.forEach((id) => {
       if (sockets[id]) {
         sockets[id].emit("subscribelisten", status);
       } else {
@@ -127,11 +127,13 @@ function informToMySubscribers({ socket, status }) {
 
 function newMessage({ recipientId, ...other }) {
   const newMessage = { recipientId, ...other };
-  sendNotification({ recipientId, ...other });
+  //sendNotification({ recipientId, ...other });
+  console.log("recipientid", recipientId);
 
   if (!sockets[recipientId]) {
     addToPending(recipientId, newMessage);
   } else {
+    console.log("emitted");
     sockets[recipientId].emit("new message", newMessage);
   }
 }
@@ -139,20 +141,24 @@ function newMessage({ recipientId, ...other }) {
 async function sendNotification({ recipientId, senderId, ...other }) {
   const user = await User.findById(recipientId);
 
+  if (!user) {
+    return null;
+  }
+
   if (user.fcm) {
     const message = {
       to: user.fcm,
 
       notification: {
         title: other.username,
-        body: other.message
+        body: other.message,
       },
       data: {
-        user: { id: senderId, ...other }
-      }
+        user: { id: senderId, ...other },
+      },
     };
 
-    fcm.send(message, function(err, response) {
+    fcm.send(message, function (err, response) {
       if (err) {
         console.log("Something has gone wrong!", err);
       } else {

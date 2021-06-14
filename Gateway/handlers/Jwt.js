@@ -1,7 +1,15 @@
 const jwt = require("jsonwebtoken");
-const { userApi } = require("./axios");
+const { userApi, authApi } = require("./axios");
 
-module.exports = (req, res, next) => {
+const options = {
+  target: "http://localhost:8002",
+  changeOrigin: true,
+  secure: false,
+  ws: true,
+  headers: {},
+};
+
+jwtHandler = (req, res, next) => {
   const { path } = req;
 
   if (!path.includes("api/user")) {
@@ -13,6 +21,8 @@ module.exports = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.API_SECRET);
     Object.keys(decoded).map((key) => {
       userApi.defaults.headers[key] = decoded[key];
+      authApi.defaults.headers[key] = decoded[key];
+      options.headers[key] = decoded[key];
     });
     req.userData = decoded;
     next();
@@ -23,4 +33,9 @@ module.exports = (req, res, next) => {
       res.status(401).send({ message: "Unauthorized." });
     }
   }
+};
+
+module.exports = {
+  options,
+  jwtHandler,
 };

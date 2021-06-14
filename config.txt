@@ -1,0 +1,8 @@
+{"path": "/socket.io", "forceNew": true, "reconnectionAttempts": 3, "timeout": 2000, "query": {
+
+
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYzBlZTFiOGE1OThiYTA3MzMzMmQxZCIsInVzZXJuYW1lIjoidGVzdDUiLCJpYXQiOjE2MjMyNTgzODl9.uLRGtuaX1T3nZZ7AgPpg9vGBZR4WHelm69HGT3YlIZ4"
+
+
+
+} }

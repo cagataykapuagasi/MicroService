@@ -11,7 +11,6 @@ const {
 module.exports = {
   login,
   register,
-  refreshToken,
   updatePassword,
 };
 
@@ -50,24 +49,10 @@ async function register(req) {
   }
 }
 
-async function refreshToken({ body: { refresh_token } }) {
-  const user = await User.findOne({ refresh_token });
-
-  if (user) {
-    const token = user.generateJWT();
-    const { refresh_token } = user.generateRefreshToken();
-
-    await user.save();
-    return Promise.resolve({ token, refresh_token });
-  }
-
-  return Promise.reject("refresh_token is incorrect");
-}
-
 async function updatePassword(req) {
   const {
     body: { password, new_password },
-    userData: { id },
+    headers: { id },
   } = req;
 
   try {

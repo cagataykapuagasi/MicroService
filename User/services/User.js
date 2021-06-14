@@ -187,6 +187,7 @@ async function updatePhoto(req) {
     file: { path },
   } = req;
   const url = `https://${req.get("host")}/${path}`;
+  console.log(id);
 
   try {
     const user = await User.findById(id);

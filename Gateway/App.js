@@ -5,22 +5,18 @@ const server = require("http").createServer(app);
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 8000;
 const Api = require("./routes");
-const jwt = require("./handlers/Jwt");
-const axios = require("axios");
-
-const authApi = axios.create({
-  baseURL: "baseURL",
-});
-
-const userApi = axios.create({
-  baseURL: "baseURL",
-});
+const { jwtHandler, options } = require("./handlers/Jwt");
+const proxy = require("http-proxy-middleware");
+const { userApi } = require("./handlers/axios");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(jwt);
+app.use(jwtHandler);
+
+const userServiceProxy = proxy(options);
 
 app.use("/api", Api);
+app.use(userServiceProxy);
 
 app.all("*", (req, res) => {
   res.status(404).send({ message: "Not Found" });

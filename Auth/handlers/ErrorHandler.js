@@ -23,18 +23,18 @@ const registerErrors = ({ password, username, email }) => {
 };
 
 const updatePasswordErrors = ({ user, password, new_password }) => {
-  if (password.length < 6) {
+  if (!password || password.length < 6) {
     return { password: "Password must not be less than 6 characters." };
   }
   if (user.validPassword(password)) {
     if (new_password.length < 6) {
       return {
-        new_password: "New Password must not be less than 6 characters."
+        new_password: "New Password must not be less than 6 characters.",
       };
     }
     if (password === new_password) {
       return {
-        new_password: "Please enter a different password."
+        new_password: "Please enter a different password.",
       };
     }
   } else {

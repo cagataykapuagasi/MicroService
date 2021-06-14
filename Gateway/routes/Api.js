@@ -1,10 +1,11 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const { authApi, userApi } = require("../handlers/axios");
+const axios = require("axios");
 
 router.post("/auth/login", Auth);
 router.post("/auth/register", Register);
-router.all("/user/*", UserService);
+router.post("/auth/update-password", UpdatePassword);
 
 async function Auth(req, res, next) {
   try {
@@ -34,17 +35,13 @@ async function Register(req, res, next) {
   }
 }
 
-async function UserService(req, res, next) {
-  console.log("req data", req.userData);
-  console.log("req path", req.path);
-  console.log("req method", req.method);
-
+async function UpdatePassword(req, res, next) {
   try {
-    const { data } = await userApi(req);
-    res.status(200).send(data);
+    const { data } = await authApi.post("auth/update-password", req.body);
+
+    return res.status(200).send(data);
   } catch (error) {
-    console.log(error);
-    res.status(error?.response?.status || 500).send(error?.response?.data);
+    res.status(400).send(error.response.data);
   }
 }
 
