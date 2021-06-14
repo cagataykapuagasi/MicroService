@@ -18,7 +18,7 @@ const upload = require("../handlers/Multer");
 
 router.post("/user/add", AddUser);
 router.get("/user/random", GetRandomUser);
-router.post("/user/search", Search);
+router.get("/user/search", Search);
 router.post("/user/fcm", SetFcm);
 router.get("/user/profile", GetUser);
 router.post("/user/profile/update", UpdateUser);

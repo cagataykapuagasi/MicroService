@@ -40,10 +40,7 @@ async function UserService(req, res, next) {
   console.log("req method", req.method);
 
   try {
-    const { data } = await userApi[req.method.toLowerCase()](
-      req.path,
-      req.body
-    );
+    const { data } = await userApi(req);
     res.status(200).send(data);
   } catch (error) {
     console.log(error);

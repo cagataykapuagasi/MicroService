@@ -151,7 +151,7 @@ async function getUser(req) {
   return Promise.reject("User not found.");
 }
 
-async function getRandomUser({ userData: { id } }) {
+async function getRandomUser({ headers: { id } }) {
   let users = await User.find(
     {
       _id: { $ne: id },
@@ -183,7 +183,7 @@ async function updateUser(req) {
 
 async function updatePhoto(req) {
   const {
-    userData: { id },
+    headers: { id },
     file: { path },
   } = req;
   const url = `https://${req.get("host")}/${path}`;
@@ -210,7 +210,7 @@ async function updatePhoto(req) {
   }
 }
 
-async function updateLanguage({ userData: { id }, body: { language } }) {
+async function updateLanguage({ headers: { id }, body: { language } }) {
   try {
     const user = await User.findById(id);
     if (!["tr", "en"].includes(language)) {
@@ -228,22 +228,22 @@ async function updateLanguage({ userData: { id }, body: { language } }) {
 }
 
 async function remove(req) {
-  User.findByIdAndDelete(req.userData.id)
+  User.findByIdAndDelete(req.headers.id)
     .then(() => Promise.resolve("User was deleted."))
     .catch(({ message }) => Promise.reject(message));
 }
 
-async function search({ body: { username }, userData: { id } }) {
+async function search({ headers: { id }, query: { value } }) {
   return User.find(
     {
-      username: { $regex: username, $options: "i" },
+      username: { $regex: value, $options: "i" },
       _id: { $ne: id },
     },
     { salt: 0, hash: 0 }
   );
 }
 
-async function setFcm({ body: { fcm }, userData: { id } }) {
+async function setFcm({ body: { fcm }, headers: { id } }) {
   try {
     const user = await User.findById(id);
     user.fcm = fcm;
