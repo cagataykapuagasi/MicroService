@@ -12,8 +12,8 @@ const {
   registerErrors,
   updatePasswordErrors,
 } = require("../handlers/ErrorHandler");
-const { closestLocation } = require("../handlers/Location");
 const language = require("../translations");
+var geodist = require("geodist");
 
 module.exports = {
   addUser,
@@ -64,6 +64,9 @@ async function addFriend(req) {
     }
 
     user.friends.push(FriendHandler(friend));
+    user.blocked_users = user.blocked_users.filter(
+      (item) => item.id !== friend.id
+    );
     await user.save();
     return Promise.resolve(user.friends);
   } catch (error) {
@@ -72,7 +75,10 @@ async function addFriend(req) {
 }
 
 async function getNearbyUsers(req) {
-  const { body } = req;
+  const {
+    body,
+    query: { range = 5000 },
+  } = req;
 
   // if (req?.headers?.id === body.id) {
   //   return Promise.reject("Cannot add friend yourself");
@@ -86,19 +92,21 @@ async function getNearbyUsers(req) {
       },
       { salt: 0, hash: 0 }
     );
+    const targetLocation = user.toJSON().location;
 
-    const findedUsers = closestLocation(user.toJSON().location, users);
+    const findedUsers = users.map((item) => {
+      const distance = geodist(
+        { lat: targetLocation.latitude, lon: targetLocation.longitude },
+        { lat: item.location.latitude, lon: item.location.longitude }
+      );
 
-    // if (!friend) {
-    //   return Promise.reject("Not found");
-    // }
+      if (distance <= range) {
+        const user = userHandlerWithoutToken(item);
+        user.distance = distance;
+        return user;
+      }
+    });
 
-    // if (user.friends.find((f) => f.id === body.id)) {
-    //   return Promise.reject("Friend already added");
-    // }
-
-    //user.friends.push(FriendHandler(friend));
-    //await user.save();
     return Promise.resolve(findedUsers);
   } catch (error) {
     return Promise.reject(error.message);
@@ -124,6 +132,7 @@ async function blockUser(req) {
     }
 
     user.blocked_users.push(FriendHandler(blockedUser));
+    user.friends = user.friends.filter((item) => item.id !== blockedUser.id);
     await user.save();
     return Promise.resolve(user.blocked_users);
   } catch (error) {

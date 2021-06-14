@@ -17,14 +17,6 @@ const {
 const upload = require("../handlers/Multer");
 
 router.post("/user/add", AddUser);
-
-function AddUser(req, res, next) {
-  console.log("add-user");
-  addUser(req)
-    .then((user) => res.status(200).send(user))
-    .catch((message) => res.status(400).send({ message }));
-}
-
 router.get("/user/random", GetRandomUser);
 router.post("/user/search", Search);
 router.post("/user/fcm", SetFcm);
@@ -36,6 +28,13 @@ router.delete("/user/profile", Remove);
 router.post("/user/friends", AddFriend);
 router.post("/user/block", BlockUser);
 router.get("/user/nearby", GetNearbyUsers);
+
+function AddUser(req, res, next) {
+  console.log("add-user");
+  addUser(req)
+    .then((user) => res.status(200).send(user))
+    .catch((message) => res.status(400).send({ message }));
+}
 
 function GetUser(req, res, next) {
   console.log("get user");
