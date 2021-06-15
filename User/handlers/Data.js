@@ -15,7 +15,7 @@ function userHandlerWithoutToken(user) {
 
 function FriendHandler(user) {
   if (user) {
-    const { hash, __v, _id, salt, friends, blockedUsers, ...other } =
+    const { hash, __v, _id, salt, friends, blocked_users, ...other } =
       user.toJSON();
     return other;
   }

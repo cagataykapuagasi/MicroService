@@ -5,10 +5,8 @@ const {
   getUser,
   getRandomUser,
   search,
-  setFcm,
   updateUser,
   updatePhoto,
-  updateLanguage,
   remove,
   addFriend,
   blockUser,
@@ -19,15 +17,13 @@ const upload = require("../handlers/Multer");
 router.post("/user/add", AddUser);
 router.get("/user/random", GetRandomUser);
 router.get("/user/search", Search);
-router.post("/user/fcm", SetFcm);
+router.get("/user/nearby", GetNearbyUsers);
 router.get("/user/profile", GetUser);
+router.delete("/user/profile", Remove);
 router.post("/user/profile/update", UpdateUser);
 router.post("/user/profile/update-photo", upload.single("photo"), UpdatePhoto);
-router.post("/user/profile/update-language", UpdateLanguage);
-router.delete("/user/profile", Remove);
-router.post("/user/friends", AddFriend);
-router.post("/user/block", BlockUser);
-router.get("/user/nearby", GetNearbyUsers);
+router.post("/user/profile/friend", AddFriend);
+router.post("/user/profile/block", BlockUser);
 
 function AddUser(req, res, next) {
   console.log("add-user");
@@ -43,13 +39,6 @@ function GetUser(req, res, next) {
     .catch((message) => res.status(404).send({ message }));
 }
 
-function UpdateLanguage(req, res, next) {
-  console.log("update language");
-  updateLanguage(req)
-    .then((r) => res.send(r))
-    .catch((message) => res.status(404).send({ message }));
-}
-
 function GetRandomUser(req, res, next) {
   console.log("get random user");
   getRandomUser(req)
@@ -61,13 +50,6 @@ function Search(req, res, next) {
   console.log("search");
   search(req)
     .then((users) => res.send(users))
-    .catch((message) => res.status(400).send({ message }));
-}
-
-function SetFcm(req, res, next) {
-  console.log("set fcm");
-  setFcm(req)
-    .then((r) => res.send(r))
     .catch((message) => res.status(400).send({ message }));
 }
 

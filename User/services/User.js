@@ -20,10 +20,8 @@ module.exports = {
   getUser,
   getRandomUser,
   search,
-  setFcm,
   updateUser,
   updatePhoto,
-  updateLanguage,
   remove,
   addFriend,
   blockUser,
@@ -166,7 +164,7 @@ async function getRandomUser({ headers: { id } }) {
 
 async function updateUser(req) {
   const {
-    body: { profile_photo, fcm, friends, blocked_users, id, ...other },
+    body: { profile_photo, friends, blocked_users, id, ...other },
   } = req;
 
   console.log(other);
@@ -211,23 +209,6 @@ async function updatePhoto(req) {
   }
 }
 
-async function updateLanguage({ headers: { id }, body: { language } }) {
-  try {
-    const user = await User.findById(id);
-    if (!["tr", "en"].includes(language)) {
-      return Promise.reject(
-        "Unsupported language.(Supported languages: tr, en)"
-      );
-    }
-
-    user.language = language;
-    await user.save();
-    return Promise.resolve({ message: "Language was successfully updated." });
-  } catch ({ message }) {
-    return Promise.reject(message);
-  }
-}
-
 async function remove(req) {
   User.findByIdAndDelete(req.headers.id)
     .then(() => Promise.resolve("User was deleted."))
@@ -244,15 +225,4 @@ async function search({ headers: { id }, query: { value } }) {
   );
 
   return users.map((item) => userHandlerWithoutToken(item));
-}
-
-async function setFcm({ body: { fcm }, headers: { id } }) {
-  try {
-    const user = await User.findById(id);
-    user.fcm = fcm;
-    await user.save();
-    return Promise.resolve({ message: "Fcm was successfully updated." });
-  } catch ({ message }) {
-    return Promise.reject(message);
-  }
 }
