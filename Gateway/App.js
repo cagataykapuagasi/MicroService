@@ -20,6 +20,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.use("", userServiceProxy);
+
 app.use("/api", Api);
 
 app.all("*", (req, res) => {
