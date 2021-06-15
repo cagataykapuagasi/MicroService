@@ -1,6 +1,10 @@
 
 {
   "swagger": "2.0",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": ["application/json"],
   "info": {
     "title": "Nearby",
     "description": "",
@@ -18,17 +22,24 @@
   "security": [{
     "bearerAuth": []
   }],
-  "produces": ["application/json"],
   "paths": {
     "/api/auth/login": {
       "post": {
         "x-swagger-router-controller": "home",
-        "operationId": "post",
+        "operationId": "login",
         "tags": ["Auth"],
         "description": "Login with username and password",
         "parameters": [
-      { "name": "username", "in": "json", "required": true, "type": "string", "example": "test" },
-      { "name": "password", "in": "json", "type": "string", "required": true, "example": "123456" }],
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/login"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -65,9 +76,16 @@
         "tags": ["Register"],
         "description": "Register with email, username and password",
         "parameters": [
-      { "name": "username", "in": "json", "required": true, "type": "string", "example": "test" },
-      { "name": "password", "in": "json", "type": "string", "required": true, "example": "123456" },
-      { "name": "email", "in": "json", "type": "string", "required": true, "example": "email@test.com" }],
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/register"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -114,8 +132,15 @@
         "tags": ["Update Password"],
         "description": "Update password with password and new password",
         "parameters": [
-      { "name": "password", "in": "json", "required": true, "type": "string", "example": "123456" },
-      { "name": "new_password", "in": "json", "type": "string", "required": true, "example": "1234567" }],
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updatePassword"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -137,7 +162,287 @@
           }
         }
       }
+    },
+    "/api/user/profile": {
+      "get": {
+        "x-swagger-router-controller": "home",
+        "operationId": "post",
+        "tags": ["User Profile"],
+        "description": "Get current user",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": {
+                "profile_photo": null,
+                "status": false,
+                "language": "en",
+                "fcm": null,
+                "about": "Available",
+                "friends": [],
+                "blocked_users": [],
+                "location": {
+                    "latitude": 0,
+                    "longitude": 0
+                },
+                "username": "test5",
+                "email": "test5@hotmail.com",
+                "createdAt": "2021-06-09T16:36:43.520Z",
+                "updatedAt": "2021-06-15T10:14:20.519Z",
+                "id": "60c0ee1b8a598ba073332d1d"
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid token",
+            "examples": {
+              "application/json": {
+                "message": "Not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/search": {
+      "get": {
+        "x-swagger-router-controller": "home",
+        "operationId": "search users",
+        "tags": ["Search Users"],
+        "description": "Search users by username",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "value",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": [
+                {
+                    "profile_photo": null,
+                    "status": false,
+                    "language": "en",
+                    "fcm": null,
+                    "about": "Available",
+                    "friends": [],
+                    "blocked_users": [],
+                    "location": {
+                        "latitude": 39.933365,
+                        "longitude": 32.859741
+                    },
+                    "username": "test10",
+                    "email": "test10@hotmail.com",
+                    "createdAt": "2021-06-09T18:52:11.559Z",
+                    "updatedAt": "2021-06-09T18:52:11.559Z",
+                    "id": "60c10ddb8a598ba073332d24"
+                },
+                {
+                    "profile_photo": null,
+                    "status": false,
+                    "language": "en",
+                    "fcm": null,
+                    "about": "Available",
+                    "friends": [],
+                    "blocked_users": [],
+                    "location": {
+                        "latitude": 0,
+                        "longitude": 0
+                    },
+                    "username": "test11",
+                    "email": "test11@hotmail.com",
+                    "createdAt": "2021-06-14T14:57:44.518Z",
+                    "updatedAt": "2021-06-14T14:57:44.518Z",
+                    "id": "60c76e68c5c25e54a630e5c9"
+                }
+            ]
+            }
+          },
+          "404": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                "message": "Not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/nearby": {
+      "get": {
+        "x-swagger-router-controller": "home",
+        "operationId": "nearby user",
+        "tags": ["Nearby Users"],
+        "description": "Nearby users by range",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "range"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": [
+                {
+                    "profile_photo": null,
+                    "status": false,
+                    "language": "en",
+                    "fcm": null,
+                    "about": "Available",
+                    "friends": [],
+                    "blocked_users": [],
+                    "location": {
+                        "latitude": 39.933365,
+                        "longitude": 32.859741
+                    },
+                    "_id": "60c10ddb8a598ba073332d24",
+                    "username": "test10",
+                    "email": "test10@hotmail.com",
+                    "createdAt": "2021-06-09T18:52:11.559Z",
+                    "updatedAt": "2021-06-09T18:52:11.559Z",
+                    "__v": 0,
+                    "id": "60c10ddb8a598ba073332d24",
+                    "distance": 50
+                },
+                {
+                    "profile_photo": null,
+                    "status": false,
+                    "language": "en",
+                    "fcm": null,
+                    "about": "Available",
+                    "friends": [],
+                    "blocked_users": [],
+                    "location": {
+                        "latitude": 0,
+                        "longitude": 0
+                    },
+                    "_id": "60c76e68c5c25e54a630e5c9",
+                    "username": "test11",
+                    "email": "test11@hotmail.com",
+                    "createdAt": "2021-06-14T14:57:44.518Z",
+                    "updatedAt": "2021-06-14T14:57:44.518Z",
+                    "__v": 0,
+                    "id": "60c76e68c5c25e54a630e5c9",
+                    "distance": 1000
+                }
+            ]
+            }
+          },
+          "404": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                "message": "Not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profile/update": {
+      "post": {
+        "x-swagger-router-controller": "home",
+        "operationId": "profile update",
+        "tags": ["Update Profile"],
+        "description": "Update your profile",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateProfile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": {
+                "profile_photo": null,
+                "status": false,
+                "language": "en",
+                "fcm": null,
+                "about": "Available",
+                "friends": [],
+                "blocked_users": [],
+                "location": {
+                    "latitude": 0,
+                    "longitude": 0
+                },
+                "username": "test5",
+                "email": "test5@hotmail.com",
+                "createdAt": "2021-06-09T16:36:43.520Z",
+                "updatedAt": "2021-06-15T10:14:20.519Z",
+                "id": "60c0ee1b8a598ba073332d1d"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                
+              }
+            }
+          }
+        }
+      }
     }
    
+  },
+
+  "definitions": {
+    "login": {
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "register": {
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "updatePassword": {
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "new_password": {
+          "type": "string"
+        }
+      }
+    },
+    "updateProfile": {
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "new_password": {
+          "type": "string"
+        }
+      }
+    }
+    
   }
 }

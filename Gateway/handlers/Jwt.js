@@ -6,7 +6,9 @@ const options = {
   changeOrigin: true,
   secure: false,
   ws: true,
-  headers: {},
+  headers: {
+    Accept: "application/json",
+  },
 };
 
 jwtHandler = (req, res, next) => {

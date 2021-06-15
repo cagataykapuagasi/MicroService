@@ -235,13 +235,15 @@ async function remove(req) {
 }
 
 async function search({ headers: { id }, query: { value } }) {
-  return User.find(
+  const users = await User.find(
     {
       username: { $regex: value, $options: "i" },
       _id: { $ne: id },
     },
-    { salt: 0, hash: 0 }
+    { salt: 0, hash: 0, __v: 0 }
   );
+
+  return users.map((item) => userHandlerWithoutToken(item));
 }
 
 async function setFcm({ body: { fcm }, headers: { id } }) {

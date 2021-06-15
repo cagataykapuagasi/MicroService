@@ -17,6 +17,7 @@ module.exports = {
 async function login({ username, password }) {
   return new Promise(async (resolve, reject) => {
     const user = await User.findOne({ username });
+    console.log("password", password);
 
     if (user && user.validPassword(password)) {
       const data = userHandler(user);
@@ -60,6 +61,7 @@ async function updatePassword(req) {
 
   try {
     const user = await User.findById(id);
+    console.log("password", password);
 
     const error = updatePasswordErrors({ user, password, new_password });
     if (error) {
