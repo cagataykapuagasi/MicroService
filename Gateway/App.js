@@ -20,9 +20,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("", userServiceProxy);
-
 app.use("/api", Api);
+
+app.use("", userServiceProxy);
 
 app.all("*", (req, res) => {
   res.status(404).send({ message: "Not Found" });
