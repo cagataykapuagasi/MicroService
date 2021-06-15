@@ -17,7 +17,7 @@ async function Auth(req, res, next) {
     console.log(data);
     return res.status(200).send({ ...data, token });
   } catch (error) {
-    res.status(400).send(error.response.data);
+    res.status(400).send(error?.response?.data);
   }
 }
 

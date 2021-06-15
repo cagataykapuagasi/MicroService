@@ -23,7 +23,10 @@ async function login({ username, password }) {
 
       resolve(data);
     } else if (user) {
-      reject({ password: language[user.language].login.password });
+      console.log(user);
+      reject({
+        password: language[(user && user.language) || "en"].login.password,
+      });
     }
 
     reject({

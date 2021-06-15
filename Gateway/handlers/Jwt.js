@@ -12,7 +12,7 @@ const options = {
 jwtHandler = (req, res, next) => {
   const { path } = req;
 
-  if (!path.includes("api/user")) {
+  if (!path.includes("api/user") && !path.includes("update-password")) {
     next();
     return;
   }

@@ -7,9 +7,14 @@ const port = process.env.PORT || 8000;
 const Api = require("./routes");
 const { jwtHandler, options } = require("./handlers/Jwt");
 const proxy = require("http-proxy-middleware");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(jwtHandler);
 
 const userServiceProxy = proxy(options);

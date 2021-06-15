@@ -1,0 +1,143 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Nearby",
+    "description": "",
+    "version": "1.0"
+  },
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "scheme": "bearer",
+        "in": "headers",
+        "bearerFormat": "jwt"
+      }
+    },
+  "security": [{
+    "bearerAuth": []
+  }],
+  "produces": ["application/json"],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "x-swagger-router-controller": "home",
+        "operationId": "post",
+        "tags": ["Auth"],
+        "description": "Login with username and password",
+        "parameters": [
+      { "name": "username", "in": "json", "required": true, "type": "string", "example": "test" },
+      { "name": "password", "in": "json", "type": "string", "required": true, "example": "123456" }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": {
+                "user": {
+                  "username": "test7",
+                  "email": "test7@hotmail.com",
+                  "createdAt": "2021-06-09T18:48:48.897Z",
+                  "updatedAt": "2021-06-09T18:48:48.897Z",
+                  "id": "60c10d108a598ba073332d21"
+              },
+              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwYzEwZDEwOGE1OThiYTA3MzMzMmQyMSIsInVzZXJuYW1lIjoidGVzdDciLCJpYXQiOjE2MjM3MDI3NDl9.-WEE5S9zUUIQJjdJaMkaJb06l9qZr5aUil7jvnMh1nE"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                "message": {
+                  "username": "Username is incorrect."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "x-swagger-router-controller": "home",
+        "operationId": "post",
+        "tags": ["Register"],
+        "description": "Register with email, username and password",
+        "parameters": [
+      { "name": "username", "in": "json", "required": true, "type": "string", "example": "test" },
+      { "name": "password", "in": "json", "type": "string", "required": true, "example": "123456" },
+      { "name": "email", "in": "json", "type": "string", "required": true, "example": "email@test.com" }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": {
+                "data": {
+                  "user": {
+                      "profile_photo": null,
+                      "status": false,
+                      "language": "en",
+                      "fcm": null,
+                      "about": "Available",
+                      "friends": [],
+                      "blocked_users": [],
+                      "location": {
+                          "latitude": 0,
+                          "longitude": 0
+                      },
+                      "username": "test",
+                      "email": "test@hotmail.com",
+                      "createdAt": "2021-06-15T10:56:38.944Z",
+                      "updatedAt": "2021-06-15T10:56:38.944Z",
+                      "id": "60c88766129cfa3654cb2759"
+                  }
+              }
+               }
+            }
+          },
+          "400": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                "message": "User validation failed: email: is already taken., username: is already taken."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/update-password": {
+      "post": {
+        "x-swagger-router-controller": "home",
+        "operationId": "post",
+        "tags": ["Update Password"],
+        "description": "Update password with password and new password",
+        "parameters": [
+      { "name": "password", "in": "json", "required": true, "type": "string", "example": "123456" },
+      { "name": "new_password", "in": "json", "type": "string", "required": true, "example": "1234567" }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": {
+                "message": "Password was updated."
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                "message": {
+                  "password": "Password is incorrect."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+   
+  }
+}
