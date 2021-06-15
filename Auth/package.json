@@ -1,8 +1,8 @@
 {
-  "name": "hellox",
+  "name": "auth-service",
   "version": "1.0.0",
   "main": "App.js",
-  "license": "cagataykapuagasi",
+  "license": "licence",
   "scripts": {
     "start": "node App.js",
     "start.dev": "nodemon"

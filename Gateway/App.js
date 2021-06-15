@@ -7,7 +7,6 @@ const port = process.env.PORT || 8000;
 const Api = require("./routes");
 const { jwtHandler, options } = require("./handlers/Jwt");
 const proxy = require("http-proxy-middleware");
-const { userApi } = require("./handlers/axios");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
