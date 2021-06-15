@@ -22,7 +22,7 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/api", Api);
 
-app.use("", userServiceProxy);
+app.use("", userServiceProxy); //for socket
 
 app.all("*", (req, res) => {
   res.status(404).send({ message: "Not Found" });
