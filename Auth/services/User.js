@@ -2,11 +2,7 @@ const db = require("../db/db");
 const User = db.User;
 const { userHandler } = require("../handlers/Data");
 const language = require("../translations");
-const {
-  userErrors,
-  registerErrors,
-  updatePasswordErrors,
-} = require("../handlers/ErrorHandler");
+const { updatePasswordErrors } = require("../handlers/ErrorHandler");
 
 module.exports = {
   login,

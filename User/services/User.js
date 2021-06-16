@@ -13,7 +13,7 @@ const {
   updatePasswordErrors,
 } = require("../handlers/ErrorHandler");
 const language = require("../translations");
-var geodist = require("geodist");
+const geodist = require("geodist");
 
 module.exports = {
   addUser,
@@ -78,10 +78,6 @@ async function getNearbyUsers(req) {
     query: { range = 5000 },
   } = req;
 
-  // if (req?.headers?.id === body.id) {
-  //   return Promise.reject("Cannot add friend yourself");
-  // }
-
   try {
     const user = await User.findById(req?.headers?.id);
     const users = await User.find(
@@ -91,8 +87,8 @@ async function getNearbyUsers(req) {
       { salt: 0, hash: 0 }
     );
     const targetLocation = user.toJSON().location;
-
-    const findedUsers = users.map((item) => {
+    const findedUsers = [];
+    users.forEach((item) => {
       const distance = geodist(
         { lat: targetLocation.latitude, lon: targetLocation.longitude },
         { lat: item.location.latitude, lon: item.location.longitude }
@@ -101,7 +97,7 @@ async function getNearbyUsers(req) {
       if (distance <= range) {
         const user = userHandlerWithoutToken(item);
         user.distance = distance;
-        return user;
+        findedUsers.push(user);
       }
     });
 
@@ -139,9 +135,7 @@ async function blockUser(req) {
 }
 
 async function getUser(req) {
-  console.log(req.headers);
   const user = await User.findById(req?.headers?.id);
-  console.log(user);
   if (user) {
     return Promise.resolve(userHandlerWithoutToken(user));
   }
@@ -167,11 +161,9 @@ async function updateUser(req) {
     body: { profile_photo, friends, blocked_users, id, ...other },
   } = req;
 
-  console.log(other);
   try {
     const user = await User.findById(req?.headers?.id);
     const newUser = { ...user.toJSON(), ...other };
-    console.log(newUser);
     await user.update(newUser);
     return Promise.resolve({ message: "User was successfully updated." });
   } catch ({ message }) {
@@ -184,17 +176,15 @@ async function updatePhoto(req) {
     headers: { id },
     file: { path },
   } = req;
-  const url = `https://${req.get("host")}/${path}`;
-  console.log(id);
+  const url = `http://${req.get("host")}/${path}`;
 
   try {
     const user = await User.findById(id);
 
-    console.log("path", user.profile_photo);
     if (user.profile_photo) {
       try {
         fs.unlinkSync(
-          user.profile_photo.replace(`https://${req.get("host")}/`, "")
+          user.profile_photo.replace(`http://${req.get("host")}/`, "")
         );
       } catch (error) {
         console.log(error);
